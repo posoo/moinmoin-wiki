@@ -1,15 +1,15 @@
-# VERSION 0.5
-# AUTHOR:         Olav Grønås Gjerde <olav@backupbay.com>
+# VERSION 0.1
+# AUTHOR:         Posoo  <seanlin2718@gmail.com>
 # DESCRIPTION:    Image with MoinMoin wiki, uwsgi, nginx and self signed SSL
 # TO_BUILD:       docker build -t moinmoin .
 # TO_RUN:         docker run -it -p 80:80 -p 443:443 --name my_wiki moinmoin
 
 FROM debian:jessie
-MAINTAINER Olav Grønås Gjerde <olav@backupbay.com>
+MAINTAINER Posoo <seanlin2718@gmail.com>
 
 # Set the version you want of MoinMoin
-ENV MM_VERSION 1.9.8
-ENV MM_CSUM 4a616d12a03f51787ac996392f9279d0398bfb3b
+ENV MM_VERSION 1.9.9
+ENV MM_CSUM d2578fb80acbe06250afc666400c4fd7bbcbd248239623e33c461a48354fa43b
 
 # Install software
 RUN apt-get update && apt-get install -qqy --no-install-recommends \
@@ -24,8 +24,8 @@ RUN apt-get update && apt-get install -qqy --no-install-recommends \
 # Download MoinMoin
 RUN curl -Ok \
   https://bitbucket.org/thomaswaldmann/moin-1.9/get/$MM_VERSION.tar.gz
-RUN if [ "$MM_CSUM" != "$(sha1sum $MM_VERSION.tar.gz | awk '{print($1)}')" ];\
-  then exit 1; fi;
+RUN if [ "$MM_CSUM" != "$(sha1sum $MM_VERSION.tar.gz | awk '{print(()}')" ];\
+  then exit 1; fi;)
 RUN mkdir moinmoin
 RUN tar xf $MM_VERSION.tar.gz -C moinmoin --strip-components=1
 
