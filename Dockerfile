@@ -1,4 +1,4 @@
-# VERSION 0.1
+# VERSION 0.2
 # AUTHOR:         Posoo  <seanlin2718@gmail.com>
 # DESCRIPTION:    Image with MoinMoin wiki, uwsgi, nginx and self signed SSL
 # TO_BUILD:       docker build -t moinmoin .
@@ -24,8 +24,8 @@ RUN apt-get update && apt-get install -qqy --no-install-recommends \
 # Download MoinMoin
 RUN curl -Ok \
   https://bitbucket.org/thomaswaldmann/moin-1.9/get/$MM_VERSION.tar.gz
-RUN if [ "$MM_CSUM" != "$(sha1sum $MM_VERSION.tar.gz | awk '{print(()}')" ];\
-  then exit 1; fi;)
+RUN if [ "$MM_CSUM" != "$(sha256sum $MM_VERSION.tar.gz | awk '{print($1)}')" ];\
+    then exit 1; fi;
 RUN mkdir moinmoin
 RUN tar xf $MM_VERSION.tar.gz -C moinmoin --strip-components=1
 
@@ -51,11 +51,14 @@ RUN ln -s /etc/nginx/sites-available/moinmoin.conf \
   /etc/nginx/sites-enabled/moinmoin.conf
 RUN rm /etc/nginx/sites-enabled/default
 
-# Create self signed certificate
+# Configure self signed certificate
 ADD generate_ssl_key.sh /usr/local/bin/
-RUN /usr/local/bin/generate_ssl_key.sh moinmoin.example.org
-RUN mv cert.pem /etc/ssl/certs/
-RUN mv key.pem /etc/ssl/private/
+ENV domain example.com
+ENV country CN
+ENV state Yunnan
+ENV locality Kunming
+ENV organization MoinMoin
+
 
 # Cleanup
 RUN rm $MM_VERSION.tar.gz
@@ -70,7 +73,10 @@ VOLUME /usr/local/share/moin/data
 EXPOSE 80
 EXPOSE 443
 
-CMD service rsyslog start && service nginx start && \
+CMD /usr/local/bin/generate_ssl_key.sh && \
+  mv cert.pem /etc/ssl/certs/ && \
+  mv key.pem /etc/ssl/private/ && \
+  service rsyslog start && service nginx start && \
   uwsgi --uid www-data \
     -s /tmp/uwsgi.sock \
     --plugins python \
