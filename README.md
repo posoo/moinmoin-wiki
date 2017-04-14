@@ -31,7 +31,7 @@ docker build --rm=true -t posoo/moinmoin-wiki ./moinmoin-wiki
 
 ## Access the website
 
-Access the url `https://localhost:80`
+Access the url `https://localhost:443`
 
 Default superuser is `mmAdmin`, you activate him by creating a new user named `mmAdmin` and set your prefered password.
 
